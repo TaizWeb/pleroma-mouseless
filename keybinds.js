@@ -74,6 +74,10 @@ function refreshTimeline() {
 	timeline[0].querySelector(".loadmore-button").click();
 }
 
+function markRead() {
+	document.getElementsByClassName("read-button")[0].click();
+}
+
 // keyDownHandler: Function to handle keyDown events
 function keyDownHandler(key) {
 	downedKey = key.key;
@@ -100,8 +104,11 @@ function keyDownHandler(key) {
 			gotoTimeline();
 			break;
 		// Refresh/Read
-		case "r":
-			refreshTimeline();
+		case "n":
+			if (selectedColumn == "timeline")
+				refreshTimeline();
+			else if (selectedColumn == "notifications")
+				markRead();
 			break;
 		// Post interactions
 		case "f":
