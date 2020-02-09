@@ -42,12 +42,18 @@ function interactPost(action) {
 
 // keyDownHandler: Function to handle keyDown events
 function keyDownHandler(key) {
-  downedKey = key.key
+	downedKey = key.key;
+	// If user is not in body, don't move selection
 	if (document.activeElement.tagName != "BODY") return;
-	switch(downedKey) {
+	// If user presses an arrow key, cancel the default scroll
+	if (downedKey == "ArrowDown" || downedKey == "ArrowUp") key.preventDefault();
+	console.log(downedKey);
+	switch (downedKey) {
+		case "ArrowDown":
 		case "j":
 			moveSelection("down");
 			break;
+		case "ArrowUp":
 		case "k":
 			moveSelection("up");
 			break;
