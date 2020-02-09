@@ -16,7 +16,6 @@ function moveSelection(direction) {
 	let increment = (direction == "up") ? -1 : 1;
 	// Break out of the function if at top post
 	if (selectedPostNumber <= 2 && increment == -1) return;
-
 	selectedPost.style.border = "none";
 	selectedPostNumber += increment;
 	selectedPost = timeline[selectedPostNumber];
@@ -40,6 +39,11 @@ function interactPost(action) {
 	}
 }
 
+// refreshTimeline: Hits the "Show new" button
+function refreshTimeline() {
+	timeline[0].querySelector(".loadmore-button").click();
+}
+
 // keyDownHandler: Function to handle keyDown events
 function keyDownHandler(key) {
 	downedKey = key.key;
@@ -47,8 +51,8 @@ function keyDownHandler(key) {
 	if (document.activeElement.tagName != "BODY") return;
 	// If user presses an arrow key, cancel the default scroll
 	if (downedKey == "ArrowDown" || downedKey == "ArrowUp") key.preventDefault();
-	console.log(downedKey);
 	switch (downedKey) {
+		// Directional keys
 		case "ArrowDown":
 		case "j":
 			moveSelection("down");
@@ -57,6 +61,11 @@ function keyDownHandler(key) {
 		case "k":
 			moveSelection("up");
 			break;
+		// Refresh/Read
+		case "r":
+			refreshTimeline();
+			break;
+		// Post interactions
 		case "f":
 			interactPost("favorite");
 			break;
