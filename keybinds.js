@@ -1,17 +1,12 @@
-// timeline[0] = col plus topbar
-// 1 = posts
-// 2 = topmost post, changes on refresh
-
 // Initializing timeline and selected post
-var timeline = document.getElementsByClassName("timeline");
+const timeline = document.getElementsByClassName("timeline");
 // The container of each notification, each index is a notif
-var notifications = document.getElementsByClassName("notifications")[0].children[0].children[1].children;
-var oldTimelineNumber;
-var oldNotificationsNumber = 0;
-var selectedColumn = "timeline";
-selectedPostNumber = 2;
-selectedPost = timeline[selectedPostNumber];
-selectedPost.style.border = "1px solid red";
+const notifications = document.getElementsByClassName("notifications")[0].children[0].children[1].children;
+let oldTimelineNumber;
+let oldNotificationsNumber = 0;
+let selectedColumn = "timeline";
+let selectedPostNumber = 2;
+let selectedPost = timeline[selectedPostNumber];
 
 // Add event listeners
 window.addEventListener("keydown", keyDownHandler);
@@ -41,6 +36,7 @@ function gotoNotifications() {
 	selectedPostNumber = oldNotificationsNumber;
 	selectedPost = notifications[selectedPostNumber];
 	selectedPost.style.border = "1px solid red";
+	selectedPost.scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});
 }
 
 // gotoTimeline: Moves user to timeline section
@@ -56,6 +52,7 @@ function gotoTimeline() {
 // interactPost: Does an action on the selected post
 function interactPost(action) {
 	// The buttons are in selectedPost > .status-body > .status-actions >children. index's are 0: reply, 1: boost, 2: favorite, 3: other
+	// This may be able to be further simplified by using getElementsByClassName on the selectedPost
 	switch(action) {
 		case "favorite":
 			selectedPost.querySelector(".status-body").querySelector(".status-actions").children[2].children[0].click();
@@ -66,6 +63,9 @@ function interactPost(action) {
 		case "reply":
 			selectedPost.querySelector(".status-body").querySelector(".status-actions").children[0].children[0].click();
 			break;
+		case "open":
+			selectedPost.querySelector(".status-body").querySelector(".media-heading").querySelector(".heading-name-row").querySelector(".heading-right").querySelector(".timeago").click();
+			break;
 	}
 }
 
@@ -74,6 +74,7 @@ function refreshTimeline() {
 	timeline[0].querySelector(".loadmore-button").click();
 }
 
+// markRead: Marks the notifications as "read"
 function markRead() {
 	document.getElementsByClassName("read-button")[0].click();
 }
@@ -85,6 +86,7 @@ function keyDownHandler(key) {
 	if (document.activeElement.tagName != "BODY") return;
 	// If user presses an arrow key, cancel the default scroll
 	if (downedKey == "ArrowDown" || downedKey == "ArrowUp") key.preventDefault();
+	// Enter, Escape, Backspace
 	switch (downedKey) {
 		// Directional keys
 		case "ArrowDown":
@@ -111,6 +113,9 @@ function keyDownHandler(key) {
 				markRead();
 			break;
 		// Post interactions
+		case "Enter":
+			interactPost("open");
+			break;
 		case "f":
 			interactPost("favorite");
 			break;
