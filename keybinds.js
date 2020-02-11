@@ -20,9 +20,9 @@ function moveSelection(direction) {
 
 	selectedPost.style.border = "none";
 	selectedPostNumber += increment;
-	if (selectedColumn == "timeline")
+	if (selectedColumn == "timeline") {
 		selectedPost = timeline[selectedPostNumber];
-	else if (selectedColumn == "notifications")
+	} else if (selectedColumn == "notifications")
 		selectedPost = notifications[selectedPostNumber];
 	selectedPost.style.border = "1px solid red";
 	selectedPost.scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});
@@ -53,7 +53,7 @@ function gotoTimeline() {
 function interactPost(action) {
 	// The buttons are in selectedPost > .status-body > .status-actions >children. index's are 0: reply, 1: boost, 2: favorite, 3: other
 	// This may be able to be further simplified by using getElementsByClassName on the selectedPost
-	switch(action) {
+	switch (action) {
 		case "favorite":
 			selectedPost.querySelector(".status-body").querySelector(".status-actions").children[2].children[0].click();
 			break;
@@ -64,7 +64,14 @@ function interactPost(action) {
 			selectedPost.querySelector(".status-body").querySelector(".status-actions").children[0].children[0].click();
 			break;
 		case "open":
-			selectedPost.querySelector(".status-body").querySelector(".media-heading").querySelector(".heading-name-row").querySelector(".heading-right").querySelector(".timeago").click();
+			let openButton = selectedPost.getElementsByClassName("heading-right")[0];
+			// Check if the post is from the instance and click accordingly
+			// Now it's opened the conversation and treats it as a single post. add a conditional to check if its a convo and if so, traverse it? Maybe have it go into convo mode, count the elements, and traverse those.
+			if (openButton.children[2].title == "Expand")
+				openButton.children[2].click();
+			else
+				openButton.children[3].click();
+
 			break;
 	}
 }
