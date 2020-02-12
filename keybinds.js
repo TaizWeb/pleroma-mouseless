@@ -7,6 +7,9 @@ let oldNotificationsNumber = 0;
 let selectedColumn = "timeline";
 let selectedPostNumber = 2;
 let selectedPost = timeline[selectedPostNumber];
+let inConversation = false;
+let conversationList;
+let conversationIndex;
 
 // Add event listeners
 window.addEventListener("keydown", keyDownHandler);
@@ -21,6 +24,10 @@ function moveSelection(direction) {
 	selectedPost.style.border = "none";
 	selectedPostNumber += increment;
 	if (selectedColumn == "timeline") {
+		if (typeof selectedPost.getElementsByClassName("conversation-heading")[0] != "undefined" || inConversation) {
+			gotoConversation(direction);
+			return;
+		}
 		selectedPost = timeline[selectedPostNumber];
 	} else if (selectedColumn == "notifications")
 		selectedPost = notifications[selectedPostNumber];
@@ -49,6 +56,28 @@ function gotoTimeline() {
 	selectedPost.style.border = "1px solid red";
 }
 
+function gotoConversation(direction) {
+	// Will get length of posts, stick user at the post they clicked, and allow them to traverse the conversation.
+	if (!inConversation) {
+		// Defining the conversation, the initial index, and moving the post
+		inConversation = true;
+		conversationList = selectedPost.getElementsByClassName("status-conversation");
+		conversationIndex = conversationList.length-1;
+		selectedPost = conversationList[conversationIndex];
+	}
+	// Redefining the list since pleroma loads chunks at a time
+	conversationList = selectedPost.getElementsByClassName("status-conversation");
+	// If out of bounds of the conversation, exit. Later define a close function to properly exit the user, or perhaps just keep them at the top?
+	if (conversationIndex > conversationList.length-1) return;
+	if (conversationIndex <= 0) return;
+	// Moving the post
+	conversationIndex = (direction == "up") ? conversationIndex-1 : conversationIndex+1;
+	selectedPost = conversationList[conversationIndex];
+	selectedPost.style.border = "1px solid red";
+	selectedPost.scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});
+}
+
+// TODO: Add a selectedPost handler function
 // interactPost: Does an action on the selected post
 function interactPost(action) {
 	// The buttons are in selectedPost > .status-body > .status-actions >children. index's are 0: reply, 1: boost, 2: favorite, 3: other
